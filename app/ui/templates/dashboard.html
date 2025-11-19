@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="controls">
+  <form method="post" action="/emails/sync">
+    <button type="submit">Sync latest emails</button>
+  </form>
+</section>
+<section class="emails">
+  <table>
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>From</th>
+        <th>Category</th>
+        <th>Priority</th>
+        <th>Lead?</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for email in emails %}
+      <tr>
+        <td>{{ email.subject }}</td>
+        <td>{{ email.sender }}</td>
+        <td>{{ email.category or '-' }}</td>
+        <td>{{ email.priority or '-' }}</td>
+        <td>{{ 'Yes' if email.lead_flag else 'No' }}</td>
+      </tr>
+      <tr class="detail">
+        <td colspan="5">
+          <strong>Snippet:</strong> {{ email.snippet }}<br />
+          <strong>Reply:</strong>
+          <textarea rows="4">{{ email.suggested_reply or '' }}</textarea>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
