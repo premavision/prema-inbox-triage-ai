@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "prema-inbox-triage-ai"
+version = "0.1.0"
+description = "Inbox Triage AI prototype for Prema Vision"
+authors = ["Denys Korolkov denyskorolkov@premavision.net"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.111.0"
+uvicorn = {extras = ["standard"], version = "^0.30.0"}
+sqlmodel = "^0.0.21"
+python-dotenv = "^1.0.1"
+pydantic-settings = "^2.2.1"
+httpx = "^0.27.0"
+openai = "^1.30.0"
+jinja2 = "^3.1.4"
+google-api-python-client = "^2.100.0"
+google-auth-httplib2 = "^0.1.1"
+google-auth-oauthlib = "^1.1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.0"
+pytest-asyncio = "^0.23.6"
+httpx = {extras = ["cli"], version = "^0.27.0"}
+anyio = "^4.4.0"
+ruff = "^0.4.2"
+black = "^24.4.0"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core>=1.8.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="controls">
+  <form method="post" action="/emails/sync">
+    <button type="submit">Sync latest emails</button>
+  </form>
+</section>
+<section class="emails">
+  <table>
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>From</th>
+        <th>Category</th>
+        <th>Priority</th>
+        <th>Lead?</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for email in emails %}
+      <tr>
+        <td>{{ email.subject }}</td>
+        <td>{{ email.sender }}</td>
+        <td>{{ email.category or '-' }}</td>
+        <td>{{ email.priority or '-' }}</td>
+        <td>{{ 'Yes' if email.lead_flag else 'No' }}</td>
+        <td>
+          {% if not email.category %}
+          <form method="post" action="/emails/{{ email.id }}/retriage" style="display: inline;">
+            <button type="submit" style="padding: 4px 8px; font-size: 12px;">Classify & Reply</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      <tr class="detail">
+        <td colspan="6">
+          <strong>Snippet:</strong> {{ email.snippet }}<br />
+          {% if email.suggested_reply %}
+          <strong>Suggested Reply:</strong>
+          <form method="post" action="/emails/{{ email.id }}/send" style="margin-top: 8px;">
+            <textarea name="reply_body" rows="6" style="width: 100%; font-family: inherit;">{{ email.suggested_reply }}</textarea>
+            <button type="submit" style="margin-top: 8px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
+              Send Reply
+            </button>
+          </form>
+          {% else %}
+          <em>No reply generated yet. Click "Classify & Reply" to generate one.</em>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
