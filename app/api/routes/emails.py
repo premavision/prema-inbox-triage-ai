@@ -19,11 +19,15 @@ async def sync_emails(
     request: Request,
     service: IngestionService = Depends(deps.get_ingestion_service),
     repository: EmailRepository = Depends(deps.get_repository),
-    classification_service: ClassificationService = Depends(deps.get_classification_service),
-    reply_service: ReplyService = Depends(deps.get_reply_service),
+    llm_client=Depends(deps.get_llm_client),
 ) -> Response:
     """Sync emails, classify them, and generate replies. Returns JSON for API calls or redirects for form submissions."""
     result = service.sync_recent()
+    
+    # Use the same repository for all operations to avoid session conflicts
+    # Create services with the shared repository
+    classification_service = ClassificationService(repository, llm_client)
+    reply_service = ReplyService(repository, llm_client)
     
     # Automatically classify and generate replies for unclassified emails
     all_emails = repository.list_emails()

@@ -61,27 +61,30 @@ class EmailRepository:
         entities: dict | None,
         status: str,
     ) -> Email:
+        # Merge email into this session if it's from another session
+        email = self.session.merge(email)
         email.lead_flag = lead_flag
         email.category = category
         email.priority = priority
         email.extracted_entities = entities
         email.processing_status = status
-        self.session.add(email)
         self.session.commit()
         self.session.refresh(email)
         return email
 
     def save_reply(self, email: Email, body: str) -> Email:
+        # Merge email into this session if it's from another session
+        email = self.session.merge(email)
         email.suggested_reply = body
         email.reply_generated_at = datetime.utcnow()
-        self.session.add(email)
         self.session.commit()
         self.session.refresh(email)
         return email
 
     def update_status(self, email: Email, status: str) -> Email:
+        # Merge email into this session if it's from another session
+        email = self.session.merge(email)
         email.processing_status = status
-        self.session.add(email)
         self.session.commit()
         self.session.refresh(email)
         return email
