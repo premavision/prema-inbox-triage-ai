@@ -1,6 +1,6 @@
 """FastAPI dependency wiring."""
 
-from collections.abc import AsyncGenerator
+from collections.abc import Generator
 
 from fastapi import Depends
 
@@ -12,9 +12,10 @@ from app.repositories.email_repository import EmailRepository
 from app.services.classification_service import ClassificationService
 from app.services.ingestion_service import IngestionService
 from app.services.reply_service import ReplyService
+from app.services.send_service import SendService
 
 
-async def get_db() -> AsyncGenerator:
+def get_db() -> Generator:
     with get_session() as session:
         yield session
 
@@ -50,3 +51,10 @@ def get_reply_service(
     llm_client=Depends(get_llm_client),
 ) -> ReplyService:
     return ReplyService(repository, llm_client)
+
+
+def get_send_service(
+    repository: EmailRepository = Depends(get_repository),
+    provider: GmailProvider = Depends(get_gmail_provider),
+) -> SendService:
+    return SendService(provider, repository)

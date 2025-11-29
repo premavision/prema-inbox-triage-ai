@@ -16,6 +16,7 @@ class Settings(BaseSettings):
 
     # Provider toggles
     gmail_enabled: bool = Field(default=True, alias="GMAIL_ENABLED")
+    gmail_use_mock: bool = Field(default=True, alias="GMAIL_USE_MOCK")
     llm_provider: str = Field(default="openai", alias="LLM_PROVIDER")
 
     # Gmail credentials (stubbed usage for now)

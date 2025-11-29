@@ -2,7 +2,7 @@
 name = "prema-inbox-triage-ai"
 version = "0.1.0"
 description = "Inbox Triage AI prototype for Prema Vision"
-authors = ["Denys Korolkov <denys@example.com>"]
+authors = ["Denys Korolkov denyskorolkov@premavision.net"]
 readme = "README.md"
 package-mode = false
 
@@ -16,6 +16,9 @@ pydantic-settings = "^2.2.1"
 httpx = "^0.27.0"
 openai = "^1.30.0"
 jinja2 = "^3.1.4"
+google-api-python-client = "^2.100.0"
+google-auth-httplib2 = "^0.1.1"
+google-auth-oauthlib = "^1.1.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.0"

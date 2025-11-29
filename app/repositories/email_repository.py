@@ -21,7 +21,9 @@ class EmailRepository:
                 select(Email).where(Email.provider_id == email.provider_id)
             ).first()
             if existing:
-                for field, value in email.model_dump().items():
+                # Update existing email, but exclude id field
+                email_dict = email.model_dump(exclude={"id"})
+                for field, value in email_dict.items():
                     setattr(existing, field, value)
             else:
                 self.session.add(email)

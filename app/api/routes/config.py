@@ -14,7 +14,10 @@ def providers(settings: Settings = Depends(get_settings)) -> ProvidersResponse:
         ProviderConfig(
             name="gmail",
             enabled=settings.gmail_enabled,
-            details={"user": settings.gmail_user_email or "not-set"},
+            details={
+                "user": settings.gmail_user_email or "not-set",
+                "mode": "mock" if settings.gmail_use_mock else "real",
+            },
         ),
         ProviderConfig(
             name=settings.llm_provider,

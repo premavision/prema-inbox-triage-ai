@@ -31,3 +31,6 @@ class EmailProvider(Protocol):
 
     def is_configured(self) -> bool:
         """Return whether provider has enough credentials to operate."""
+    
+    def send_reply(self, *, to: str, subject: str, body: str, thread_id: str | None = None) -> bool:
+        """Send a reply email. Returns True if successful, False otherwise."""

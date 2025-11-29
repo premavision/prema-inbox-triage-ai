@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from textwrap import dedent
 
 from openai import AsyncOpenAI
@@ -32,13 +33,15 @@ class OpenAILLMClient(LLMClient):
             Body: {body}
             """
         )
-        response = await self.client.responses.create(
+        response = await self.client.chat.completions.create(
             model=self.model,
-            input=prompt,
+            messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"},
         )
-        content = response.output[0].content[0].text  # type: ignore[index]
-        data = self.client._parse_json(content)  # type: ignore[attr-defined]
+        content = response.choices[0].message.content
+        if not content:
+            raise ValueError("Empty response from OpenAI")
+        data = json.loads(content)
         return ClassificationResult(
             lead_flag=bool(data.get("lead_flag")),
             category=str(data.get("category", "OTHER")),
@@ -56,6 +59,11 @@ class OpenAILLMClient(LLMClient):
             Summary/context: {summary or 'N/A'}
             """
         )
-        response = await self.client.responses.create(model=self.model, input=prompt)
-        text = response.output[0].content[0].text  # type: ignore[index]
+        response = await self.client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+        )
+        text = response.choices[0].message.content
+        if not text:
+            raise ValueError("Empty response from OpenAI")
         return ReplyResult(body=text.strip())
