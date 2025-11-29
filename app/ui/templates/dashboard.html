@@ -38,7 +38,10 @@
             <span class="badge badge-lead">⭐ Lead</span>
             {% endif %}
             {% if email.category %}
-            <span class="badge badge-category badge-{{ email.category.lower().replace(' ', '-') }}">{{ email.category }}</span>
+            <span class="badge badge-category badge-{{ email.category.lower().replace('_', '-') }}">
+              <span class="badge-icon">{{ email.category | category_icon }}</span>
+              <span class="badge-text">{{ email.category | format_category }}</span>
+            </span>
             {% endif %}
             {% if email.priority %}
             <span class="badge badge-priority badge-{{ email.priority.lower() }}">{{ email.priority }}</span>
