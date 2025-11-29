@@ -12,6 +12,40 @@ from app.services.reply_service import ReplyService
 router = APIRouter()
 templates = Jinja2Templates(directory="app/ui/templates")
 
+# Category label mappings
+CATEGORY_LABELS = {
+    "SALES_LEAD": "Sales Lead",
+    "SUPPORT_REQUEST": "Support Request",
+    "INTERNAL": "Internal",
+    "OTHER": "Other",
+}
+
+CATEGORY_ICONS = {
+    "SALES_LEAD": "💼",
+    "SUPPORT_REQUEST": "🛟",
+    "INTERNAL": "🏢",
+    "OTHER": "📧",
+}
+
+
+def format_category_label(category: str | None) -> str:
+    """Format category label for display."""
+    if not category:
+        return ""
+    return CATEGORY_LABELS.get(category, category.replace("_", " ").title())
+
+
+def get_category_icon(category: str | None) -> str:
+    """Get icon for category."""
+    if not category:
+        return ""
+    return CATEGORY_ICONS.get(category, "📧")
+
+
+# Add custom filters to Jinja2 environment
+templates.env.filters["format_category"] = format_category_label
+templates.env.filters["category_icon"] = get_category_icon
+
 
 @router.get("/", response_class=HTMLResponse)
 def dashboard(request: Request, repository: EmailRepository = Depends(deps.get_repository)) -> HTMLResponse:

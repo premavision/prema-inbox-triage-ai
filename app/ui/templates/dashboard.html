@@ -1,56 +1,123 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="controls">
-  <form method="post" action="/emails/sync">
-    <button type="submit">Sync latest emails</button>
-  </form>
-</section>
-<section class="emails">
-  <table>
-    <thead>
-      <tr>
-        <th>Subject</th>
-        <th>From</th>
-        <th>Category</th>
-        <th>Priority</th>
-        <th>Lead?</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
+<div class="dashboard-container">
+  <section class="controls-section">
+    <div class="controls-card">
+      <h2>Email Management</h2>
+      <form method="post" action="/emails/sync" class="sync-form">
+        <button type="submit" class="btn btn-primary btn-sync">
+          <span class="btn-icon">🔄</span>
+          Sync Latest Emails
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="emails-section">
+    <div class="section-header">
+      <h2>Inbox</h2>
+      <span class="email-count">{{ emails|length }} email{{ 's' if emails|length != 1 else '' }}</span>
+    </div>
+
+    {% if emails %}
+    <div class="emails-grid">
       {% for email in emails %}
-      <tr>
-        <td>{{ email.subject }}</td>
-        <td>{{ email.sender }}</td>
-        <td>{{ email.category or '-' }}</td>
-        <td>{{ email.priority or '-' }}</td>
-        <td>{{ 'Yes' if email.lead_flag else 'No' }}</td>
-        <td>
-          {% if not email.category %}
-          <form method="post" action="/emails/{{ email.id }}/retriage" style="display: inline;">
-            <button type="submit" style="padding: 4px 8px; font-size: 12px;">Classify & Reply</button>
-          </form>
+      <div class="email-card" data-email-id="{{ email.id }}">
+        <div class="email-card-header">
+          <div class="email-meta">
+            <div class="email-sender">
+              <span class="sender-avatar">{{ email.sender[0].upper() if email.sender else '?' }}</span>
+              <div class="sender-info">
+                <strong class="sender-name">{{ email.sender }}</strong>
+                <span class="email-date">{{ email.received_at.strftime('%b %d, %Y at %I:%M %p') if email.received_at else 'Unknown date' }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="email-badges">
+            {% if email.lead_flag %}
+            <span class="badge badge-lead">⭐ Lead</span>
+            {% endif %}
+            {% if email.category %}
+            <span class="badge badge-category badge-{{ email.category.lower().replace('_', '-') }}">
+              <span class="badge-icon">{{ email.category | category_icon }}</span>
+              <span class="badge-text">{{ email.category | format_category }}</span>
+            </span>
+            {% endif %}
+            {% if email.priority %}
+            <span class="badge badge-priority badge-{{ email.priority.lower() }}">{{ email.priority }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="email-card-body">
+          <h3 class="email-subject">{{ email.subject or '(No Subject)' }}</h3>
+          {% if email.snippet %}
+          <p class="email-snippet">{{ email.snippet }}</p>
           {% endif %}
-        </td>
-      </tr>
-      <tr class="detail">
-        <td colspan="6">
-          <strong>Snippet:</strong> {{ email.snippet }}<br />
-          {% if email.suggested_reply %}
-          <strong>Suggested Reply:</strong>
-          <form method="post" action="/emails/{{ email.id }}/send" style="margin-top: 8px;">
-            <textarea name="reply_body" rows="6" style="width: 100%; font-family: inherit;">{{ email.suggested_reply }}</textarea>
-            <button type="submit" style="margin-top: 8px; padding: 8px 16px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">
-              Send Reply
+        </div>
+
+        <div class="email-card-footer">
+          {% if not email.category %}
+          <form method="post" action="/emails/{{ email.id }}/retriage" class="inline-form">
+            <button type="submit" class="btn btn-secondary btn-sm">
+              <span class="btn-icon">🤖</span>
+              Classify & Reply
             </button>
           </form>
           {% else %}
-          <em>No reply generated yet. Click "Classify & Reply" to generate one.</em>
+          <button type="button" class="btn btn-outline btn-sm toggle-details" data-email-id="{{ email.id }}">
+            <span class="btn-icon">📋</span>
+            View Details
+          </button>
           {% endif %}
-        </td>
-      </tr>
+        </div>
+
+        <div class="email-details" id="details-{{ email.id }}" style="display: none;">
+          <div class="details-content">
+            <div class="detail-section">
+              <h4>Email Content</h4>
+              <div class="email-body-preview">{{ email.body[:500] }}{% if email.body|length > 500 %}...{% endif %}</div>
+            </div>
+
+            {% if email.suggested_reply %}
+            <div class="detail-section">
+              <h4>Suggested Reply</h4>
+              <form method="post" action="/emails/{{ email.id }}/send" class="reply-form">
+                <textarea 
+                  name="reply_body" 
+                  rows="8" 
+                  class="reply-textarea"
+                  placeholder="Edit the suggested reply before sending..."
+                >{{ email.suggested_reply }}</textarea>
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-success">
+                    <span class="btn-icon">✉️</span>
+                    Send Reply
+                  </button>
+                </div>
+              </form>
+            </div>
+            {% else %}
+            <div class="detail-section">
+              <div class="empty-state">
+                <p>No reply generated yet. Click "Classify & Reply" to generate one.</p>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
       {% endfor %}
-    </tbody>
-  </table>
-</section>
+    </div>
+    {% else %}
+    <div class="empty-inbox">
+      <div class="empty-state-large">
+        <span class="empty-icon">📭</span>
+        <h3>No emails yet</h3>
+        <p>Click "Sync Latest Emails" to fetch emails from your inbox.</p>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+</div>
 {% endblock %}
