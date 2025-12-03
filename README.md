@@ -1,75 +1,149 @@
-# Inbox Triage AI
+# Prema Inbox Triage AI
 
-Production-style FastAPI prototype that syncs emails (Gmail), classifies them via LLM, and surfaces
-suggested replies through a REST API and lightweight UI. Built for the Prema Vision portfolio.
+Production-style FastAPI application that syncs Gmail inboxes, classifies messages using an LLM, and generates suggested replies.  
+Part of the **Prema Vision AI Automations** portfolio.
 
-## Features
-- Gmail provider abstraction with mock data path (ready for real API integration)
-- LLM abstraction with OpenAI implementation for classification + reply generation
-- SQLModel persistence storing emails, metadata, and reply drafts
-- FastAPI endpoints for syncing, listing, retrieving, retriaging, and sending emails
-- Minimal Jinja2 UI for demoing the workflow with reply editing and sending
-- Automatic classification and reply generation on sync
-- Basic unit tests covering ingestion + classification services
+---
 
-## Tech stack
-- Python 3.11, FastAPI, SQLModel/SQLite, Jinja2
-- OpenAI Async client (pluggable via provider interface)
-- Poetry for dependency + tooling management
+## 🚀 Features
 
-## Architecture overview
+- **Gmail provider abstraction**  
+  - Mock email provider (works out of the box)  
+  - Real Gmail API support via OAuth (optional)
+
+- **LLM-powered classification & reply generation**  
+  - Provider interface with OpenAI implementation  
+  - Draft replies stored and editable in the UI
+
+- **Email ingestion & workflow automation**  
+  - Automatic classification on sync  
+  - Reply suggestion generation  
+  - Re-triaging endpoint
+
+- **Lightweight UI for operators**  
+  - Jinja2 templates  
+  - View inbox, inspect messages, edit replies, send replies
+
+- **Persistence layer**  
+  - SQLModel + SQLite  
+  - Emails, metadata, replies, triage states
+
+- **Testable modular architecture**  
+  - EmailProvider, LLMClient, Repositories, Services  
+  - Mock providers for unit testing
+
+---
+
+## 🧱 Project Structure
+
 ```
 app/
-  core/            -> settings, logging
-  db/              -> engine + metadata
-  models/          -> SQLModel entities
-  providers/       -> Email + LLM provider abstractions
-  repositories/    -> data access layer
-  services/        -> ingestion, classification, reply logic
-  api/routes/      -> FastAPI routers
-  ui/              -> templates + static assets
+  core/            # settings, logging
+  db/              # database init + engine
+  models/          # SQLModel ORM entities
+  providers/       # Gmail + mock providers, LLM providers
+  repositories/    # data access layer
+  services/        # ingestion, classification, reply logic
+  api/routes/      # FastAPI routers
+  ui/              # minimal Jinja2 dashboard
+tests/             # unit tests
 ```
-Providers and LLM clients expose small protocols (`EmailProvider`, `LLMClient`). Services depend on these
-protocols + repositories, keeping domain logic framework-agnostic and easy to test.
 
-## Getting started
-1. Install Poetry and run `poetry install`.
-2. (Optional) Copy `.env.example` to `.env` and configure:
-   - For **mock mode** (default): No configuration needed - works out of the box!
-   - For **real Gmail**: Set `GMAIL_USE_MOCK=false` and add Gmail OAuth credentials (see `GMAIL_OAUTH_SETUP.md`)
-   - For **OpenAI features**: Add `OPENAI_API_KEY`
-3. Launch the API + UI:
-   ```bash
-   poetry run uvicorn app.main:app --reload
-   ```
-4. Visit `http://127.0.0.1:8000/` for the dashboard.
+---
 
-**Note**: By default, the app uses mock email data. To use real Gmail, set `GMAIL_USE_MOCK=false` in `.env` and configure OAuth credentials. See `MOCK_VS_REAL.md` for details.
+## ⚙️ Getting Started
 
-**Sending Replies**: To send replies via Gmail API, you need a refresh token with `gmail.send` scope. The app includes this scope, but if your current token only has `gmail.readonly`, you'll need to obtain a new refresh token. In mock mode, sending replies is simulated (logged but not actually sent).
+### 1. Install Dependencies
 
-## API reference
-- `GET /health`
-- `GET /config/providers`
-- `POST /emails/sync` - Sync emails, automatically classify and generate replies
-- `GET /emails?is_lead=true&priority=HIGH` - List emails with optional filters
-- `GET /emails/{id}` - Get email details
-- `POST /emails/{id}/retriage` - Re-classify email and generate reply
-- `POST /emails/{id}/send` - Send a reply email (requires `gmail.send` scope)
-
-## Testing
+```bash
+poetry install
 ```
+
+### 2. Configure Environment (optional)
+
+Copy env template:
+
+```bash
+cp .env.example .env
+```
+
+Modes:
+
+| Mode | Description | Requirements |
+|------|-------------|--------------|
+| **Mock (default)** | Uses built-in example emails | No config needed |
+| **Real Gmail** | Uses Gmail API to fetch/send emails | OAuth credentials + refresh token |
+| **OpenAI** | Uses LLM for classification & replies | `OPENAI_API_KEY` |
+
+See:  
+- `GMAIL_OAUTH_SETUP.md`  
+- `MOCK_VS_REAL.md`
+
+---
+
+## ▶️ Run the App
+
+```bash
+poetry run uvicorn app.main:app --reload
+```
+
+Open the UI:
+
+```
+http://127.0.0.1:8000/
+```
+
+---
+
+## 📨 Sending Replies
+
+- Mock mode → replies are logged (not sent)  
+- Real Gmail → requires token with `gmail.send` scope  
+- If your token only has `gmail.readonly`, generate a new one
+
+---
+
+## 🛠 API Endpoints
+
+| Method | Endpoint | Description |
+|-------|----------|-------------|
+| GET | `/health` | Health check |
+| POST | `/emails/sync` | Sync inbox, auto-classify emails |
+| GET | `/emails` | List emails (filters supported) |
+| GET | `/emails/{id}` | Get email details |
+| POST | `/emails/{id}/retriage` | Re-run LLM classification |
+| POST | `/emails/{id}/send` | Send reply email |
+
+---
+
+## 🧪 Testing
+
+```bash
 poetry run pytest
 ```
 
-## Linting
-```
+---
+
+## 🧹 Tooling
+
+```bash
 poetry run ruff check .
 poetry run black .
 ```
 
-## Roadmap
-- Real Gmail OAuth flow + incremental sync
-- Background workers for classification/reply generation
+---
+
+## 🗺 Roadmap
+
+- Real Gmail OAuth flow with token refresh
+- Background tasks for async classification
 - Additional providers (Outlook, HubSpot)
-- Richer UI with filters and inline editing
+- Improved UI (filters, inline editing)
+- Lead-scoring & tighter CRM workflows
+
+---
+
+## 🤝 Contributions
+
+Issues and PRs are welcome.  
+Part of the **Prema Vision AI Automation portfolio**.
