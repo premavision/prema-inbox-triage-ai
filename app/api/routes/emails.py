@@ -50,7 +50,11 @@ async def sync_emails(
     
     # Check if this is a form submission (browser request)
     content_type = request.headers.get("content-type", "")
-    if "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type:
+    accept = request.headers.get("accept", "")
+    is_form = "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type
+    wants_json = "application/json" in accept
+    
+    if is_form and not wants_json:
         return RedirectResponse(url="/", status_code=303)
     from fastapi.responses import JSONResponse
     return JSONResponse(content={"synced": result.synced, "classified": classified_count, "replies_generated": reply_count})
@@ -122,7 +126,12 @@ def send_reply(
     
     # Check if this is a form submission (browser request)
     content_type = request.headers.get("content-type", "")
-    if "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type:
+    accept = request.headers.get("accept", "")
+    
+    is_form = "application/x-www-form-urlencoded" in content_type or "multipart/form-data" in content_type
+    wants_json = "application/json" in accept
+    
+    if is_form and not wants_json:
         return RedirectResponse(url="/", status_code=303)
     
     return JSONResponse(content={"success": True, "message": "Reply sent successfully"})

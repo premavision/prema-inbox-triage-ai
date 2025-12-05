@@ -115,3 +115,6 @@ print(f"Mock mode: {settings.gmail_use_mock}")
 - Demonstrating real Gmail integration
 - Development of Gmail-specific features
 
+
+
+

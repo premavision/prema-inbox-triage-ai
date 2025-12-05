@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import List
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -32,6 +32,13 @@ class Settings(BaseSettings):
     allowed_origins: List[str] = Field(default_factory=lambda: ["*"])
 
     model_config = {"env_file": ".env", "extra": "ignore"}
+
+    @model_validator(mode='after')
+    def set_test_defaults(self):
+        if self.app_env == "test":
+            if not self.openai_api_key:
+                self.openai_api_key = "mock"
+        return self
 
 
 @lru_cache
