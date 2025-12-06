@@ -46,7 +46,7 @@ app/
   services/        # ingestion, classification, reply logic
   api/routes/      # FastAPI routers
   ui/              # minimal Jinja2 dashboard
-tests/             # unit tests
+tests/             # unit tests + e2e tests (Playwright)
 ```
 
 ---
@@ -118,9 +118,32 @@ http://127.0.0.1:8000/
 
 ## 🧪 Testing
 
+### Unit Tests
 ```bash
 poetry run pytest
 ```
+
+### End-to-End Tests
+Comprehensive e2e tests using Playwright covering all API endpoints, UI interactions, and complete workflows.
+
+**Setup:**
+```bash
+poetry install  # Installs playwright dependencies
+poetry run playwright install  # Installs browser binaries
+```
+
+**Run e2e tests:**
+```bash
+# All e2e tests
+poetry run pytest tests/e2e/ -v
+
+# Specific test suites
+poetry run pytest tests/e2e/test_api_endpoints.py -v
+poetry run pytest tests/e2e/test_ui_dashboard.py -v
+poetry run pytest tests/e2e/test_integration_workflows.py -v
+```
+
+See `tests/e2e/README.md` for detailed documentation.
 
 ---
 

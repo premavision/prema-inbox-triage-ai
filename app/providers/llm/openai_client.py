@@ -17,10 +17,21 @@ class OpenAILLMClient(LLMClient):
     def __init__(self, settings: Settings) -> None:
         if not settings.openai_api_key:
             raise ValueError("OPENAI_API_KEY is required for OpenAI client")
-        self.client = AsyncOpenAI(api_key=settings.openai_api_key)
+        
+        self.is_mock = settings.openai_api_key == "mock"
+        if not self.is_mock:
+            self.client = AsyncOpenAI(api_key=settings.openai_api_key)
         self.model = settings.openai_model
 
     async def classify_email(self, *, subject: str, body: str) -> ClassificationResult:
+        if self.is_mock:
+            return ClassificationResult(
+                lead_flag=True,
+                category="SALES_LEAD",
+                priority="HIGH",
+                entities={"sender_role": "unknown"},
+            )
+
         prompt = dedent(
             f"""
             You are an inbox triage assistant. Read the email below and return a JSON object with:
@@ -50,6 +61,9 @@ class OpenAILLMClient(LLMClient):
         )
 
     async def generate_reply(self, *, subject: str, body: str, summary: str | None = None) -> ReplyResult:
+        if self.is_mock:
+            return ReplyResult(body="Thank you for your email. This is a mock reply.")
+
         prompt = dedent(
             f"""
             You craft short, friendly first-response emails. Include greeting, summary, 1-2 clarification
