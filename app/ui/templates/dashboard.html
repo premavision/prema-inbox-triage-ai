@@ -4,12 +4,38 @@
   <section class="controls-section">
     <div class="controls-card">
       <h2>Email Management</h2>
-      <form method="post" action="/emails/sync" class="sync-form">
-        <button type="submit" class="btn btn-primary btn-sync">
-          <span class="btn-icon">🔄</span>
-          Sync Latest Emails
+      {% if error %}
+      <div class="alert alert-error" id="error-alert">
+        <span class="alert-icon">⚠️</span>
+        <span class="alert-message">{{ error }}</span>
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+      {% endif %}
+      <div class="controls-actions">
+        <form method="post" action="/emails/sync" class="sync-form" id="sync-form">
+          <button type="submit" class="btn btn-primary btn-sync" id="sync-btn" title="Fetch and sync the latest emails from your inbox">
+            <span class="btn-icon">🔄</span>
+            <span class="btn-text">Sync Latest Emails</span>
+            <span class="btn-badge" id="sync-badge" style="display: none;"></span>
+          </button>
+        </form>
+        <form method="post" action="/emails/reset" class="reset-form" id="reset-form">
+          <button type="submit" class="btn btn-secondary btn-reset" id="reset-btn" title="Clear all emails and reset the demo data">
+            <span class="btn-icon">🗑️</span>
+            <span class="btn-text">Reset Data</span>
+          </button>
+        </form>
+        <button type="button" class="btn btn-outline btn-test-error" id="test-error-btn" title="Simulate an error to test error handling">
+          <span class="btn-icon">🧪</span>
+          <span class="btn-text">Test Error</span>
         </button>
-      </form>
+      </div>
+      <div class="controls-status" id="controls-status" style="display: none;">
+        <div class="status-indicator">
+          <span class="status-icon"></span>
+          <span class="status-message"></span>
+        </div>
+      </div>
     </div>
   </section>
 

@@ -49,8 +49,17 @@ templates.env.filters["category_icon"] = get_category_icon
 
 @router.get("/", response_class=HTMLResponse)
 def dashboard(request: Request, repository: EmailRepository = Depends(deps.get_repository)) -> HTMLResponse:
+    import time
     emails = repository.list_emails()
-    return templates.TemplateResponse("dashboard.html", {"request": request, "emails": emails})
+    error = request.query_params.get("error")
+    # Add timestamp to prevent caching of static files in development
+    timestamp = int(time.time())
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request, 
+        "emails": emails, 
+        "error": error,
+        "timestamp": timestamp
+    })
 
 
 @router.post("/emails/{email_id}/retriage")

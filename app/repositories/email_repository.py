@@ -122,3 +122,12 @@ class EmailRepository:
         self.session.commit()
         self.session.refresh(email)
         return email
+
+    def delete_all(self) -> int:
+        """Delete all emails from the database. Returns count of deleted emails."""
+        count = self.session.exec(select(Email)).all()
+        deleted_count = len(count)
+        for email in count:
+            self.session.delete(email)
+        self.session.commit()
+        return deleted_count

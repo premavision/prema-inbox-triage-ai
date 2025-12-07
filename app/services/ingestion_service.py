@@ -22,7 +22,7 @@ class IngestionService:
         self.provider = provider
         self.repository = repository
 
-    def sync_recent(self, *, limit: int = 10) -> IngestionResult:
+    def sync_recent(self, *, limit: int = 5) -> IngestionResult:
         from app.models.email import Email
         from datetime import datetime
         
