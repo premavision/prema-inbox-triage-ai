@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import base64
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Iterable
 
 from google.auth.transport.requests import Request
@@ -14,6 +14,7 @@ from googleapiclient.errors import HttpError
 
 from app.core.config import Settings
 from app.providers.email.base import EmailMessage, EmailProvider
+from app.providers.email.decorators import mock_fallback
 
 # Gmail API scopes
 # Include send scope for replying to emails
@@ -28,9 +29,13 @@ logger = logging.getLogger(__name__)
 class GmailProvider:
     """Gmail provider with real API integration using OAuth2."""
 
+    # Class-level counter for mock emails to ensure unique provider_ids across syncs
+    _mock_email_counter = 0
+
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
         self._service = None
+        self._simulate_error = False  # Flag to simulate errors for testing
 
     def name(self) -> str:
         return "gmail"
@@ -169,63 +174,83 @@ class GmailProvider:
             return
 
         # Try to use real Gmail API if configured and mock is disabled
+        # Use decorator pattern for clean separation
         try:
-            if self.is_configured():
-                logger.info(f"Attempting to fetch {limit} messages from Gmail API")
-                service = self._get_service()
-                if service:
-                    try:
-                        # List messages
-                        logger.debug("Calling Gmail API to list messages")
-                        results = (
-                            service.users()
-                            .messages()
-                            .list(userId="me", maxResults=limit, q="is:inbox")
-                            .execute()
-                        )
-                        messages = results.get("messages", [])
-                        logger.info(f"Gmail API returned {len(messages)} message(s)")
-
-                        for msg_ref in messages:
-                            msg_id = msg_ref["id"]
-                            try:
-                                # Get full message details
-                                logger.debug(f"Fetching full details for message {msg_id}")
-                                msg = service.users().messages().get(userId="me", id=msg_id, format="full").execute()
-                                email_msg = self._parse_email_message(msg_id, msg)
-                                if email_msg:
-                                    logger.debug(f"Successfully parsed message: {email_msg.subject}")
-                                    yield email_msg
-                            except Exception as e:
-                                logger.warning(f"Failed to parse message {msg_id}: {type(e).__name__}: {e}")
-                                continue
-                        logger.info("Successfully fetched messages from Gmail API")
-                        return
-                    except HttpError as e:
-                        logger.error(f"Gmail API HttpError: Status {e.resp.status}, {e.error_details if hasattr(e, 'error_details') else str(e)}")
-                        logger.warning("Falling back to mock data due to API error")
-                    except Exception as e:
-                        logger.error(f"Gmail API error: {type(e).__name__}: {e}")
-                        logger.warning("Falling back to mock data due to error")
-                else:
-                    logger.warning("Gmail service not available, falling back to mock data")
-            else:
-                logger.debug("Gmail not configured, using mock data")
+            yield from self._list_recent_messages_real(limit=limit)
         except Exception as e:
-            logger.error(f"Unexpected error in list_recent_messages: {type(e).__name__}: {e}")
-            logger.warning("Falling back to mock data due to unexpected error")
+            # If real implementation fails and decorator didn't catch it, fallback to mock
+            logger.warning(f"Real implementation failed, falling back to mock: {type(e).__name__}: {e}")
+            yield from self._get_mock_messages(limit=limit)
 
-        # Fallback to mock data if not configured or API fails
-        logger.info("Using mock email data")
-        return self._get_mock_messages(limit=limit)
+    @mock_fallback(
+        "_get_mock_messages",
+        "Failed to fetch from Gmail API"
+    )
+    def _list_recent_messages_real(self, *, limit: int = 10) -> Iterable[EmailMessage]:
+        """Real Gmail API implementation for fetching messages."""
+        # Check for simulated error first (before any API calls)
+        if self._simulate_error:
+            raise Exception("Simulated error: Failed to fetch emails from provider")
+        
+        if not self.is_configured():
+            logger.debug("Gmail not configured, raising to trigger mock fallback")
+            raise ValueError("Gmail not configured")
+
+        logger.info(f"Attempting to fetch {limit} messages from Gmail API")
+        service = self._get_service()
+        if not service:
+            logger.warning("Gmail service not available, raising to trigger mock fallback")
+            raise ValueError("Gmail service not available")
+
+        try:
+            # List messages
+            logger.debug("Calling Gmail API to list messages")
+            results = (
+                service.users()
+                .messages()
+                .list(userId="me", maxResults=limit, q="is:inbox")
+                .execute()
+            )
+            messages = results.get("messages", [])
+            logger.info(f"Gmail API returned {len(messages)} message(s)")
+
+            for msg_ref in messages:
+                msg_id = msg_ref["id"]
+                try:
+                    # Get full message details
+                    logger.debug(f"Fetching full details for message {msg_id}")
+                    msg = service.users().messages().get(userId="me", id=msg_id, format="full").execute()
+                    email_msg = self._parse_email_message(msg_id, msg)
+                    if email_msg:
+                        logger.debug(f"Successfully parsed message: {email_msg.subject}")
+                        yield email_msg
+                except Exception as e:
+                    logger.warning(f"Failed to parse message {msg_id}: {type(e).__name__}: {e}")
+                    continue
+            logger.info("Successfully fetched messages from Gmail API")
+        except HttpError as e:
+            logger.error(f"Gmail API HttpError: Status {e.resp.status}, {e.error_details if hasattr(e, 'error_details') else str(e)}")
+            raise  # Re-raise to trigger mock fallback
+        except Exception as e:
+            logger.error(f"Gmail API error: {type(e).__name__}: {e}")
+            raise  # Re-raise to trigger mock fallback
 
     def send_reply(self, *, to: str, subject: str, body: str, thread_id: str | None = None) -> bool:
         """Send a reply email via Gmail API."""
         # In mock mode, just log and return success
         if self.settings.gmail_use_mock:
-            logger.info(f"[MOCK] Would send reply to {to}: {subject[:50]}...")
-            return True
+            return self._send_reply_mock(to=to, subject=subject, body=body, thread_id=thread_id)
         
+        # Use real implementation
+        return self._send_reply_real(to=to, subject=subject, body=body, thread_id=thread_id)
+
+    def _send_reply_mock(self, *, to: str, subject: str, body: str, thread_id: str | None = None) -> bool:
+        """Mock implementation for sending replies."""
+        logger.info(f"[MOCK] Would send reply to {to}: {subject[:50]}...")
+        return True
+
+    def _send_reply_real(self, *, to: str, subject: str, body: str, thread_id: str | None = None) -> bool:
+        """Real Gmail API implementation for sending replies."""
         if not self.is_configured():
             logger.error("Cannot send reply: Gmail not configured")
             return False
@@ -264,8 +289,20 @@ class GmailProvider:
             logger.error(f"Failed to send reply: {type(e).__name__}: {e}")
             return False
 
+    def set_simulate_error(self, value: bool) -> None:
+        """Set flag to simulate errors for testing."""
+        self._simulate_error = value
+
+    def reset_mock_counter(self) -> None:
+        """Reset the mock email counter (useful for testing/demo reset)."""
+        GmailProvider._mock_email_counter = 0
+
     def _get_mock_messages(self, *, limit: int = 10) -> Iterable[EmailMessage]:
         """Generate mock email messages for testing with varied content."""
+        # Check for simulated error
+        if self._simulate_error:
+            raise Exception("Simulated error: Failed to fetch emails from provider")
+        
         now = datetime.now(tz=timezone.utc)
         
         # Varied mock email templates to test different classifications
@@ -339,14 +376,22 @@ class GmailProvider:
         
         for idx in range(limit):
             template = mock_templates[idx % len(mock_templates)]
+            # Use class-level counter to ensure unique provider_ids across syncs
+            provider_id = f"mock-{GmailProvider._mock_email_counter}"
+            GmailProvider._mock_email_counter += 1
+            
+            # Add slight time variation to emails for better ordering
+            time_offset_seconds = idx * 60  # 1 minute between emails
+            email_time = now - timedelta(seconds=time_offset_seconds)
+            
             yield EmailMessage(
-                provider_id=f"mock-{idx}",
-                thread_id=f"thread-{idx}",
+                provider_id=provider_id,
+                thread_id=f"thread-{GmailProvider._mock_email_counter}",
                 sender=template["sender"],
                 recipients=[self.settings.gmail_user_email or "triage@example.com"],
                 cc=[],
-                subject=f"{template['subject']} #{idx}",
+                subject=f"{template['subject']} #{GmailProvider._mock_email_counter}",
                 snippet=template["snippet"],
                 body=template["body"],
-                received_at=now,
+                received_at=email_time,
             )
