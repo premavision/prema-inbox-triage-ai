@@ -126,7 +126,13 @@
             {% else %}
             <div class="detail-section">
               <div class="empty-state">
-                <p>No reply generated yet. Click "Classify & Reply" to generate one.</p>
+                <p>No reply generated yet.</p>
+                <form method="post" action="/emails/{{ email.id }}/retriage" class="inline-form generate-reply-form">
+                  <button type="submit" class="btn btn-secondary btn-sm">
+                    <span class="btn-icon">✏️</span>
+                    Generate Reply
+                  </button>
+                </form>
               </div>
             </div>
             {% endif %}
