@@ -47,13 +47,16 @@ function initToggleDetails() {
  * Add loading states to forms and handle AJAX submissions
  */
 function initFormLoadingStates() {
-  const forms = document.querySelectorAll('form');
+  const forms = document.querySelectorAll('form:not([data-form-initialized])');
   
   forms.forEach(form => {
     // Skip forms that are already handled (sync, reset)
     if (form.id === 'sync-form' || form.id === 'reset-form') {
       return;
     }
+    
+    // Mark form as initialized to avoid duplicate listeners
+    form.setAttribute('data-form-initialized', 'true');
     
     form.addEventListener('submit', async function(e) {
       const submitButton = form.querySelector('button[type="submit"]');
@@ -633,6 +636,8 @@ function updateEmailsList(emails, newEmailsCount = 0) {
   // Re-initialize interactive features for new cards
   initToggleDetails();
   initEmailCardAnimations();
+  // Re-initialize form handlers for new forms (retriage, reply generation, etc.)
+  initFormLoadingStates();
 }
 
 /**
@@ -712,7 +717,13 @@ function createEmailCard(email) {
           ` : `
           <div class="detail-section">
             <div class="empty-state">
-              <p>No reply generated yet. Click "Classify & Reply" to generate one.</p>
+              <p>No reply generated yet.</p>
+              <form method="post" action="/emails/${email.id}/retriage" class="inline-form generate-reply-form">
+                <button type="submit" class="btn btn-secondary btn-sm">
+                  <span class="btn-icon">✏️</span>
+                  Generate Reply
+                </button>
+              </form>
             </div>
           </div>
           `}
