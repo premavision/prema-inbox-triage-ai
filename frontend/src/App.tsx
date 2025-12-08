@@ -3,12 +3,15 @@ import './App.css'
 import type { Email } from './types/email'
 import { emailService } from './services/api'
 import { EmailCard } from './components/EmailCard'
+import { useToast } from './context/ToastContext'
+import { Icons } from './components/Icons'
 
 function App() {
   const [emails, setEmails] = useState<Email[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [syncing, setSyncing] = useState(false)
+  const { success: showSuccess, error: showError } = useToast()
 
   const fetchEmails = async () => {
     setLoading(true)
@@ -18,6 +21,7 @@ function App() {
       setEmails(data)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch emails')
+      showError(err.message || 'Failed to fetch emails')
     } finally {
       setLoading(false)
     }
@@ -25,6 +29,10 @@ function App() {
 
   useEffect(() => {
     fetchEmails()
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
   }, [])
 
   const handleSync = async (e: React.FormEvent) => {
@@ -34,7 +42,15 @@ function App() {
     try {
       const result = await emailService.sync()
       if (result.success) {
-        alert(`Synced ${result.synced} emails!`)
+        showSuccess(`Synced ${result.synced} emails!`)
+        
+        // Show dedicated notification
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('Sync Completed', {
+            body: `Successfully synced ${result.synced} emails.`
+          })
+        }
+
         await fetchEmails()
       } else {
         setError(result.error || 'Sync failed')
@@ -54,7 +70,7 @@ function App() {
     try {
       const result = await emailService.reset()
       if (result.success) {
-        alert(`Deleted ${result.deleted} emails.`)
+        showSuccess(`Deleted ${result.deleted} emails.`)
         await fetchEmails()
       } else {
         setError(result.error || 'Reset failed')
@@ -70,7 +86,9 @@ function App() {
     try {
       await emailService.simulateError()
     } catch (err: any) {
-      setError('Simulated error occurred: ' + err.message)
+      const msg = 'Simulated error occurred: ' + err.message
+      setError(msg)
+      showError(msg)
     }
   }
 
@@ -79,10 +97,10 @@ function App() {
       <header className="main-header">
         <div className="header-content">
           <div className="logo">
-            <span className="logo-icon">📧</span>
+            <span className="logo-icon"><Icons.Mail /></span>
             <span>Prema Inbox Triage</span>
           </div>
-          <p className="tagline">AI-powered email classification and response drafting</p>
+          <p className="tagline">AI-powered email classification</p>
         </div>
       </header>
 
@@ -90,36 +108,37 @@ function App() {
         <div className="dashboard-container">
           <section className="controls-section">
             <div className="controls-card">
-              <h2>Email Management</h2>
+              <div className="controls-header">
+                <h2>Email Management</h2>
+                <div className="controls-actions">
+                  <form className="sync-form" onSubmit={handleSync}>
+                    <button type="submit" className="btn btn-primary" disabled={syncing}>
+                      <Icons.Refresh className={syncing ? 'spin' : ''} />
+                      {syncing ? 'Syncing...' : 'Sync Latest Emails'}
+                    </button>
+                  </form>
+                  
+                  <form className="reset-form" onSubmit={handleReset}>
+                    <button type="submit" className="btn btn-secondary" disabled={loading}>
+                      <Icons.Trash />
+                      Reset Data
+                    </button>
+                  </form>
+                  
+                  <button type="button" className="btn btn-outline" onClick={handleTestError}>
+                    <Icons.Beaker />
+                    Test Error
+                  </button>
+                </div>
+              </div>
               
               {error && (
-                <div className="alert alert-error" id="error-alert">
-                  <span className="alert-icon">⚠️</span>
+                <div className="alert alert-error">
+                  <Icons.Alert />
                   <span className="alert-message">{error}</span>
-                  <button className="alert-close" onClick={() => setError(null)}>×</button>
+                  <button className="alert-close" onClick={() => setError(null)}>&times;</button>
                 </div>
               )}
-
-              <div className="controls-actions">
-                <form className="sync-form" onSubmit={handleSync}>
-                  <button type="submit" className="btn btn-primary btn-sync" id="sync-btn" disabled={syncing}>
-                    <span className="btn-icon">{syncing ? '⏳' : '🔄'}</span>
-                    <span className="btn-text">{syncing ? 'Syncing...' : 'Sync Latest Emails'}</span>
-                  </button>
-                </form>
-                
-                <form className="reset-form" onSubmit={handleReset}>
-                  <button type="submit" className="btn btn-secondary btn-reset" id="reset-btn" disabled={loading}>
-                    <span className="btn-icon">🗑️</span>
-                    <span className="btn-text">Reset Data</span>
-                  </button>
-                </form>
-                
-                <button type="button" className="btn btn-outline btn-test-error" onClick={handleTestError}>
-                  <span className="btn-icon">🧪</span>
-                  <span className="btn-text">Test Error</span>
-                </button>
-              </div>
             </div>
           </section>
 
@@ -144,7 +163,7 @@ function App() {
             ) : (
               <div className="empty-inbox">
                 <div className="empty-state-large">
-                  <span className="empty-icon">📭</span>
+                  <span className="empty-icon"><Icons.Inbox /></span>
                   <h3>No emails yet</h3>
                   <p>Click "Sync Latest Emails" to fetch emails from your inbox.</p>
                 </div>

@@ -135,6 +135,20 @@ async def retriage_email(
     return ReTriageResponse(email=EmailSchema.model_validate(email))
 
 
+@router.post("/{email_id}/generate-reply", response_model=EmailSchema)
+async def generate_reply_draft(
+    email_id: int,
+    repository: EmailRepository = Depends(deps.get_repository),
+    reply_service: ReplyService = Depends(deps.get_reply_service),
+) -> EmailSchema:
+    try:
+        email = repository.get(email_id)
+        email = await reply_service.create_draft_reply(email)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return EmailSchema.model_validate(email)
+
+
 @router.delete("/reset")
 @router.post("/reset")
 async def reset_emails(

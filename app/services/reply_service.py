@@ -18,6 +18,9 @@ class ReplyService:
         if not email.lead_flag and email.priority not in {"HIGH", "MEDIUM"}:
             self.repository.update_status(email, "no_reply_needed")
             return email
+        return await self.create_draft_reply(email)
+
+    async def create_draft_reply(self, email: Email) -> Email:
         reply = await self.llm_client.generate_reply(subject=email.subject, body=email.body)
         self.repository.save_reply(email, reply.body)
         self.repository.update_status(email, "reply_generated")
