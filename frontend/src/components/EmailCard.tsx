@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { Email } from '../types/email';
 import { emailService } from '../services/api';
 import { useToast } from '../context/ToastContext';
+import { Icons } from './Icons';
 
 interface EmailCardProps {
     email: Email;
@@ -18,15 +19,14 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
         setReplyBody(email.suggested_reply || '');
     }, [email.suggested_reply]);
 
-    // Helpers from original script.js
     const getCategoryIcon = (category: string) => {
-        const iconMap: Record<string, string> = {
-            'SALES_LEAD': '💼',
-            'SUPPORT_REQUEST': '🛟',
-            'INTERNAL': '🏢',
-            'OTHER': '📧'
+        const iconMap: Record<string, React.ReactNode> = {
+            'SALES_LEAD': <Icons.Briefcase />,
+            'SUPPORT_REQUEST': <Icons.LifeBuoy />,
+            'INTERNAL': <Icons.Building />,
+            'OTHER': <Icons.Mail />
         };
-        return iconMap[category] || '📧';
+        return iconMap[category] || <Icons.Mail />;
     };
 
     const formatCategory = (category: string) => {
@@ -40,13 +40,13 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
     };
 
     const getStatusIcon = (status: string) => {
-        const iconMap: Record<string, string> = {
-            'pending': '⏳',
-            'reply_generated': '✏️',
-            'reply_sent': '✅',
-            'no_reply_needed': '🚫'
+        const iconMap: Record<string, React.ReactNode> = {
+            'pending': <Icons.Clock />,
+            'reply_generated': <Icons.Edit />,
+            'reply_sent': <Icons.Check />,
+            'no_reply_needed': <Icons.XCircle />
         };
-        return iconMap[status] || '❓';
+        return iconMap[status] || <Icons.Clock />;
     };
 
     const formatStatus = (status: string) => {
@@ -116,14 +116,14 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
     const isReplySent = email.processing_status === 'reply_sent';
 
     return (
-        <div className="email-card">
+        <div className={`email-card ${email.processing_status === 'pending' ? 'status-pending' : ''}`}>
             <div className="email-card-header">
                 <div className="email-meta">
-                    <div className="email-sender">
+                    <div className="sender-info">
                         <span className="sender-avatar">
                             {email.sender ? email.sender[0].toUpperCase() : '?'}
                         </span>
-                        <div className="sender-info">
+                        <div className="sender-details">
                             <strong className="sender-name">{email.sender || 'Unknown'}</strong>
                             <span className="email-date">{formatDate(email.received_at)}</span>
                         </div>
@@ -131,14 +131,14 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
                 </div>
                 <div className="email-badges">
                     <span className={`badge badge-status badge-status-${(email.processing_status || 'pending').toLowerCase().replace(/_/g, '-')}`}>
-                        <span className="badge-icon">{getStatusIcon(email.processing_status || 'pending')}</span>
-                        <span className="badge-text">{formatStatus(email.processing_status || 'pending')}</span>
+                        {getStatusIcon(email.processing_status || 'pending')}
+                        <span>{formatStatus(email.processing_status || 'pending')}</span>
                     </span>
                     {email.lead_flag && <span className="badge badge-lead">⭐ Lead</span>}
                     {email.category && (
-                        <span className={`badge badge-category badge-${email.category.toLowerCase().replace('_', '-')}`}>
-                            <span className="badge-icon">{getCategoryIcon(email.category)}</span>
-                            <span className="badge-text">{formatCategory(email.category)}</span>
+                        <span className={`badge badge-category`}>
+                            {getCategoryIcon(email.category)}
+                            <span>{formatCategory(email.category)}</span>
                         </span>
                     )}
                     {email.priority && (
@@ -158,7 +158,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
                 {!email.category ? (
                     <form className="inline-form" onSubmit={handleRetriage}>
                         <button type="submit" className="btn btn-secondary btn-sm" disabled={loading}>
-                            <span className="btn-icon">🤖</span>
+                            <Icons.Bot />
                             {loading ? 'Processing...' : 'Classify & Reply'}
                         </button>
                     </form>
@@ -168,14 +168,14 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
                         className="btn btn-outline btn-sm toggle-details"
                         onClick={() => setExpanded(!expanded)}
                     >
-                        <span className="btn-icon">{expanded ? '👁️' : '📋'}</span>
+                        {expanded ? <Icons.EyeOff /> : <Icons.Eye />}
                         {expanded ? 'Hide Details' : 'View Details'}
                     </button>
                 )}
             </div>
 
             {expanded && email.category && (
-                <div className="email-details" style={{ display: 'block' }}>
+                <div className="email-details">
                     <div className="details-content">
                         <div className="detail-section">
                             <h4>Email Content</h4>
@@ -197,10 +197,10 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
                                     <div className="form-actions">
                                         <button 
                                             type="submit" 
-                                            className={`btn ${isReplySent ? 'btn-secondary' : 'btn-success'}`}
+                                            className={`btn ${isReplySent ? 'btn-secondary' : 'btn-primary'}`}
                                             disabled={loading || isReplySent}
                                         >
-                                            <span className="btn-icon">{isReplySent ? '✅' : '✉️'}</span>
+                                            <Icons.Send />
                                             {loading ? 'Sending...' : (isReplySent ? 'Reply Sent' : 'Send Reply')}
                                         </button>
                                     </div>
@@ -212,7 +212,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
                                     <p>No reply generated yet.</p>
                                     <form className="inline-form generate-reply-form" onSubmit={handleGenerateReply}>
                                         <button type="submit" className="btn btn-secondary btn-sm" disabled={loading}>
-                                            <span className="btn-icon">✏️</span>
+                                            <Icons.Edit />
                                             {loading ? 'Generating...' : 'Generate Reply'}
                                         </button>
                                     </form>

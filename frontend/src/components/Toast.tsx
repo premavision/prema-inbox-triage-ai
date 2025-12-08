@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Icons } from './Icons';
 
 export type ToastType = 'success' | 'error' | 'info';
 
@@ -21,10 +22,10 @@ export const Toast = ({ id, message, type, onClose, duration = 3000 }: ToastProp
 
   const getIcon = () => {
     switch (type) {
-      case 'success': return '✅';
-      case 'error': return '⚠️';
-      case 'info': return 'ℹ️';
-      default: return 'ℹ️';
+      case 'success': return <Icons.Check />;
+      case 'error': return <Icons.Alert />;
+      case 'info': return <Icons.LifeBuoy />; // Using LifeBuoy as info icon or maybe Alert
+      default: return <Icons.LifeBuoy />;
     }
   };
 
@@ -32,7 +33,7 @@ export const Toast = ({ id, message, type, onClose, duration = 3000 }: ToastProp
     <div className={`toast toast-${type}`}>
       <span className="toast-icon">{getIcon()}</span>
       <span className="toast-message">{message}</span>
-      <button className="alert-close" onClick={() => onClose(id)}>×</button>
+      <button className="alert-close" onClick={() => onClose(id)}>&times;</button>
     </div>
   );
 };
