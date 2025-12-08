@@ -520,6 +520,19 @@ body {
   font-size: 0.875rem;
 }
 
+/* Local Empty States (like No Reply Generated) */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
 /* Footer */
 .main-footer {
   text-align: center;
