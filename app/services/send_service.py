@@ -34,6 +34,8 @@ class SendService:
         
         if success:
             # Update email status
+            # Also update the suggested_reply with what was actually sent, to ensure consistency
+            email.suggested_reply = reply_body
             self.repository.update_status(email, "reply_sent")
         
         return success

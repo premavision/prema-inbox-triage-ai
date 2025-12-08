@@ -28,6 +28,10 @@ export const emailService = {
         await api.post(`/emails/${id}/retriage`);
     },
 
+    generateReply: async (id: number): Promise<void> => {
+        await api.post(`/emails/${id}/generate-reply`);
+    },
+
     sendReply: async (id: number, body: string): Promise<void> => {
         const formData = new FormData();
         formData.append('reply_body', body);

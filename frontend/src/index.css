@@ -265,6 +265,33 @@ body {
   transform: translateY(0);
 }
 
+.btn:disabled,
+.btn[disabled] {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.btn-primary:disabled:hover,
+.btn-primary[disabled]:hover,
+.btn-secondary:disabled:hover,
+.btn-secondary[disabled]:hover,
+.btn-success:disabled:hover,
+.btn-success[disabled]:hover {
+  background: inherit; /* Fallback */
+  transform: none;
+  box-shadow: none;
+}
+
+/* Specific fix for secondary button disabled hover to match non-hover state */
+.btn-secondary:disabled:hover,
+.btn-secondary[disabled]:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
 .btn-primary {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
   color: white;
@@ -700,6 +727,13 @@ body {
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+.reply-textarea.reply-sent {
+  background-color: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border-color: transparent;
+  resize: none;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -752,6 +786,34 @@ body {
   color: var(--text-muted);
   font-size: 0.875rem;
   border-top: 1px solid var(--border-color);
+}
+
+/* Status Badges */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+}
+
+.badge-status-pending {
+  background: linear-gradient(135deg, var(--secondary) 0%, #94a3b8 100%);
+}
+
+.badge-status-reply-generated {
+  background: linear-gradient(135deg, var(--info) 0%, #22d3ee 100%);
+}
+
+.badge-status-reply-sent {
+  background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);
+}
+
+.badge-status-no-reply-needed {
+  background: linear-gradient(135deg, #9ca3af 0%, #d1d5db 100%);
 }
 
 /* Responsive Design */
