@@ -3,12 +3,14 @@ import './App.css'
 import type { Email } from './types/email'
 import { emailService } from './services/api'
 import { EmailCard } from './components/EmailCard'
+import { useToast } from './context/ToastContext'
 
 function App() {
   const [emails, setEmails] = useState<Email[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [syncing, setSyncing] = useState(false)
+  const { success: showSuccess, error: showError } = useToast()
 
   const fetchEmails = async () => {
     setLoading(true)
@@ -18,6 +20,7 @@ function App() {
       setEmails(data)
     } catch (err: any) {
       setError(err.message || 'Failed to fetch emails')
+      showError(err.message || 'Failed to fetch emails')
     } finally {
       setLoading(false)
     }
@@ -34,7 +37,7 @@ function App() {
     try {
       const result = await emailService.sync()
       if (result.success) {
-        alert(`Synced ${result.synced} emails!`)
+        showSuccess(`Synced ${result.synced} emails!`)
         await fetchEmails()
       } else {
         setError(result.error || 'Sync failed')
@@ -54,7 +57,7 @@ function App() {
     try {
       const result = await emailService.reset()
       if (result.success) {
-        alert(`Deleted ${result.deleted} emails.`)
+        showSuccess(`Deleted ${result.deleted} emails.`)
         await fetchEmails()
       } else {
         setError(result.error || 'Reset failed')
@@ -70,7 +73,9 @@ function App() {
     try {
       await emailService.simulateError()
     } catch (err: any) {
-      setError('Simulated error occurred: ' + err.message)
+      const msg = 'Simulated error occurred: ' + err.message
+      setError(msg)
+      showError(msg)
     }
   }
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Email } from '../types/email';
 import { emailService } from '../services/api';
+import { useToast } from '../context/ToastContext';
 
 interface EmailCardProps {
     email: Email;
@@ -11,6 +12,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
     const [expanded, setExpanded] = useState(false);
     const [replyBody, setReplyBody] = useState(email.suggested_reply || '');
     const [loading, setLoading] = useState(false);
+    const { success: showSuccess, error: showError } = useToast();
 
     useEffect(() => {
         setReplyBody(email.suggested_reply || '');
@@ -76,7 +78,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
             onUpdate();
         } catch (error) {
             console.error('Failed to retriage:', error);
-            alert('Failed to classify & reply');
+            showError('Failed to classify & reply');
         } finally {
             setLoading(false);
         }
@@ -90,7 +92,7 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
             onUpdate();
         } catch (error) {
             console.error('Failed to generate reply:', error);
-            alert('Failed to generate reply');
+            showError('Failed to generate reply');
         } finally {
             setLoading(false);
         }
@@ -101,11 +103,11 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
         setLoading(true);
         try {
             await emailService.sendReply(email.id, replyBody);
-            alert('Reply sent successfully!');
+            showSuccess('Reply sent successfully!');
             onUpdate();
         } catch (error) {
             console.error('Failed to send reply:', error);
-            alert('Failed to send reply');
+            showError('Failed to send reply');
         } finally {
             setLoading(false);
         }
