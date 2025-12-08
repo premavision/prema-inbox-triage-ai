@@ -59,6 +59,18 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
         return statusMap[status] || status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
     };
 
+    const getPriorityIcon = (priority: string) => {
+        const p = priority.toLowerCase();
+        if (p === 'high') return <Icons.ChevronsUp />;
+        if (p === 'medium') return <Icons.Minus />;
+        if (p === 'low') return <Icons.ChevronDown />;
+        return <Icons.Minus />;
+    };
+
+    const formatPriority = (priority: string) => {
+        return priority.charAt(0).toUpperCase() + priority.slice(1).toLowerCase();
+    };
+
     const formatDate = (dateString: string) => {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', {
@@ -143,7 +155,8 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
                     )}
                     {email.priority && (
                         <span className={`badge badge-priority badge-${email.priority.toLowerCase()}`}>
-                            {email.priority}
+                            {getPriorityIcon(email.priority)}
+                            <span>{formatPriority(email.priority)}</span>
                         </span>
                     )}
                 </div>

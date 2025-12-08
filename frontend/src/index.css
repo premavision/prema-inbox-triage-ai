@@ -346,6 +346,27 @@ body {
   color: var(--info-text);
 }
 
+/* Priority Badges */
+.badge-priority {
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+
+.badge-high {
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+}
+
+.badge-medium {
+  background-color: #fef3c7; /* Amber-100 */
+  color: #d97706; /* Amber-600 */
+}
+
+.badge-low {
+  background-color: #f1f5f9; /* Slate-100 */
+  color: #64748b; /* Slate-500 */
+}
+
 /* Status Specific Colors */
 .badge-status-pending { background-color: var(--bg-subtle); color: var(--text-secondary); }
 .badge-status-reply-generated { background-color: var(--info-bg); color: var(--info-text); }
