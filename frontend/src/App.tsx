@@ -29,6 +29,10 @@ function App() {
 
   useEffect(() => {
     fetchEmails()
+    // Request notification permission
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission()
+    }
   }, [])
 
   const handleSync = async (e: React.FormEvent) => {
@@ -39,6 +43,14 @@ function App() {
       const result = await emailService.sync()
       if (result.success) {
         showSuccess(`Synced ${result.synced} emails!`)
+        
+        // Show dedicated notification
+        if ('Notification' in window && Notification.permission === 'granted') {
+          new Notification('Sync Completed', {
+            body: `Successfully synced ${result.synced} emails.`
+          })
+        }
+
         await fetchEmails()
       } else {
         setError(result.error || 'Sync failed')
