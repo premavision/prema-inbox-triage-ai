@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     openai_model: str = Field(default="gpt-4o-mini", alias="OPENAI_MODEL")
 
-    allowed_origins: List[str] = Field(default_factory=lambda: ["*"])
+    allowed_origins: List[str] = Field(default_factory=lambda: ["*"], alias="ALLOWED_ORIGINS")
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 
