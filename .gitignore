@@ -66,3 +66,6 @@ gmail_credentials.env
 *.credentials.json
 temp_gmail_credentials.json
 gmail_token.json
+
+# Streamlit
+.streamlit/secrets.toml
