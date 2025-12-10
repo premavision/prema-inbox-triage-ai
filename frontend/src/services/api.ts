@@ -3,6 +3,7 @@ import type { Email, EmailListResponse, SyncResponse, ResetResponse } from '../t
 
 // Create axios instance with default config
 const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
     headers: {
         'Content-Type': 'application/json',
     },

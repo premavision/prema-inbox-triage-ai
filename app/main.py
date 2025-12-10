@@ -20,6 +20,13 @@ app = FastAPI(title=settings.app_name)
 def on_startup() -> None:
     """Initialize database tables on startup."""
     SQLModel.metadata.create_all(engine)
+    
+    # Auto-seed data for demo purposes if DB is empty
+    from app.seed_db import seed_emails
+    try:
+        seed_emails()
+    except Exception as e:
+        print(f"Error seeding database: {e}")
 
 app.add_middleware(
     CORSMiddleware,
