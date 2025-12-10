@@ -34,6 +34,12 @@ Part of the **Prema Vision AI Automations** portfolio.
 
 ---
 
+## 🌐 Live Demo
+
+- **Web UI:** https://prema-inbox-triage-ai.vercel.app
+- **API docs (Swagger):** https://prema-inbox-triage-ai.onrender.com/docs
+
+
 ## 🧱 Project Structure
 
 ```
