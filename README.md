@@ -7,11 +7,8 @@ Production-grade FastAPI + React/Vite automation platform that syncs Gmail inbox
 - **Web UI:** https://prema-inbox-triage-ai.vercel.app
 - **API docs (Swagger):** https://prema-inbox-triage-ai.onrender.com/docs
 
-## ⭐ Loom Walkthrough
-LOOM_WALKTHROUGH: <loom link placeholder>
-
-## ⭐ Screenshots
-SCREENSHOTS: <folder or individual images placeholder>
+## ⭐ Walkthrough
+![User Flow](https://share.cleanshot.com/Hffs0VpY+)
 
 ---
 
@@ -33,6 +30,9 @@ For businesses drowning in inbound communications, this architecture demonstrate
 - **Operational Dashboard:** Dedicated React/Vite dashboard for reviewing classifications, editing drafts, and managing inbox state.
 - **Robust Persistence:** SQLModel (SQLite) backend ensures data consistency, audit trails, and easy state management.
 - **Developer Experience:** Fully typed codebase (Python/TypeScript), dependency injection, and comprehensive E2E testing (Playwright).
+
+## ⭐ Screenshots
+![UI](https://share.cleanshot.com/J1p4vq92+)
 
 ## Architecture Overview
 The system follows a domain-driven design with a clear separation of concerns. A FastAPI backend orchestrates the ingestion, classification, and response workflows, identifying clear boundaries between external providers (Gmail, OpenAI) and core business logic.
@@ -207,7 +207,8 @@ POST /emails/{email_id}/send
 - **WebSockets:** Implement real-time frontend updates as emails are processed.
 
 ## Contact
-For collaboration, consulting, or questions:
-Denys Korolkov — Prema Vision LLC
+
+For collaboration, consulting, or questions: Denys Korolkov — Prema Vision LLC
+
 📧 denys@premavision.net
 🌐 https://premavision.net
