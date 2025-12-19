@@ -4,8 +4,23 @@ Production-grade FastAPI + React/Vite automation platform that syncs Gmail inbox
 > Built by **Prema Vision LLC**, an AI automation consultancy led by **Denys Korolkov**.
 
 ## ⭐ Live Demo
-- **Web UI:** https://prema-inbox-triage-ai.vercel.app
-- **API docs (Swagger):** https://prema-inbox-triage-ai.onrender.com/docs
+
+**Web UI (Human-in-the-loop Dashboard)**
+👉 [https://prema-inbox-triage-ai.vercel.app](https://prema-inbox-triage-ai.vercel.app)
+
+**API (Swagger / OpenAPI)**
+👉 [https://prema-inbox-triage-ai.onrender.com/docs](https://prema-inbox-triage-ai.onrender.com/docs)
+
+**Demo Video (2 min walkthrough)**
+👉 [https://youtu.be/OHVMQciu70U](https://youtu.be/OHVMQciu70U)
+
+Short, real-world demo showing:
+
+* Inbox sync (Mock + Real Gmail modes)
+* AI classification (Sales / Support / Noise)
+* Context-aware reply drafting
+* Human review & approval before sending
+
 
 ## ⭐ Walkthrough
 ![User Flow](https://share.cleanshot.com/Hffs0VpY+)
