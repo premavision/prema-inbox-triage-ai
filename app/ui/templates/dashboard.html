@@ -25,10 +25,15 @@
             <span class="btn-text">Reset Data</span>
           </button>
         </form>
+        {% if debug_mode %}
+        <!-- Test Error button hidden by default; uncomment below when you need to simulate an error -->
+        {#-
         <button type="button" class="btn btn-outline btn-test-error" id="test-error-btn" title="Simulate an error to test error handling">
           <span class="btn-icon">🧪</span>
           <span class="btn-text">Test Error</span>
         </button>
+        -#}
+        {% endif %}
       </div>
       <div class="controls-status" id="controls-status" style="display: none;">
         <div class="status-indicator">

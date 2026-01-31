@@ -463,3 +463,6 @@ If you see timeout errors, try:
 2. Adding `page.wait_for_timeout()` after slow operations
 3. Using `wait_until="domcontentloaded"` instead of `"networkidle"` for faster checks
 
+
+
+

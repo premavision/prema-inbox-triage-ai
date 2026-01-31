@@ -174,8 +174,3 @@ poetry run python debug_gmail.py
 # Test sync
 curl -X POST http://127.0.0.1:8000/emails/sync
 ```
-
-
-
-
-

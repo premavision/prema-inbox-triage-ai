@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.api import deps
+from app.core.config import Settings, get_settings
 from app.repositories.email_repository import EmailRepository
 from app.services.classification_service import ClassificationService
 from app.services.reply_service import ReplyService
@@ -46,19 +47,23 @@ def get_category_icon(category: str | None) -> str:
 templates.env.filters["format_category"] = format_category_label
 templates.env.filters["category_icon"] = get_category_icon
 
-
 @router.get("/", response_class=HTMLResponse)
-def dashboard(request: Request, repository: EmailRepository = Depends(deps.get_repository)) -> HTMLResponse:
+def dashboard(
+    request: Request,
+    repository: EmailRepository = Depends(deps.get_repository),
+    settings: Settings = Depends(get_settings),
+) -> HTMLResponse:
     import time
     emails = repository.list_emails()
     error = request.query_params.get("error")
     # Add timestamp to prevent caching of static files in development
     timestamp = int(time.time())
     return templates.TemplateResponse("dashboard.html", {
-        "request": request, 
-        "emails": emails, 
+        "request": request,
+        "emails": emails,
         "error": error,
-        "timestamp": timestamp
+        "timestamp": timestamp,
+        "debug_mode": settings.app_env != "production",
     })
 
 

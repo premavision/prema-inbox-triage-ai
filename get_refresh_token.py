@@ -117,16 +117,7 @@ def main():
         print("Make sure you granted offline access during authorization")
         sys.exit(1)
         
-    except KeyboardInterrupt:
-        print("\nCancelled by user")
-        Path(temp_credentials_file).unlink(missing_ok=True)
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
-        Path(temp_credentials_file).unlink(missing_ok=True)
-        sys.exit(1)
+    # (Unreachable code removed)
 
 
 if __name__ == "__main__":

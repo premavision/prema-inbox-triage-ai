@@ -146,9 +146,15 @@ export const EmailCard: React.FC<EmailCardProps> = ({ email, onUpdate }) => {
                         {getStatusIcon(email.processing_status || 'pending')}
                         <span>{formatStatus(email.processing_status || 'pending')}</span>
                     </span>
-                    {email.lead_flag && <span className="badge badge-lead">⭐ Lead</span>}
+                    {email.lead_flag && email.category !== 'SALES_LEAD' && (
+                        <span className="badge badge-lead">⭐ Lead</span>
+                    )}
                     {email.category && (
-                        <span className={`badge badge-category`}>
+                        <span
+                            className={`badge badge-category badge-category-${email.category
+                                .toLowerCase()
+                                .replace(/_/g, '-')}`}
+                        >
                             {getCategoryIcon(email.category)}
                             <span>{formatCategory(email.category)}</span>
                         </span>
