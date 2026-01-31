@@ -1,0 +1,281 @@
+.summary-dashboard {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.summary-header {
+  margin-bottom: 24px;
+}
+
+.summary-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.summary-title svg {
+  width: 20px;
+  height: 20px;
+  color: #667eea;
+}
+
+.summary-title h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.summary-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-left: 30px;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: #f9fafb;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.stat-leads {
+  background: linear-gradient(135deg, var(--warning-bg) 0%, #fff8d5 100%);
+}
+
+.stat-support {
+  background: linear-gradient(135deg, #dbeafe 0%, var(--info-bg) 100%);
+}
+
+.stat-internal {
+  background: linear-gradient(135deg, #f3f4f6 0%, var(--bg-subtle) 100%);
+}
+
+.stat-performance {
+  background: linear-gradient(135deg, var(--success-bg) 0%, #f0fdf4 100%);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-leads .stat-icon {
+  background: linear-gradient(135deg, #fbbf24 0%, var(--warning) 100%);
+  color: white;
+}
+
+.stat-support .stat-icon {
+  background: linear-gradient(135deg, #3b82f6 0%, var(--info) 100%);
+  color: white;
+}
+
+.stat-internal .stat-icon {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.stat-performance .stat-icon {
+  background: linear-gradient(135deg, #34d399 0%, var(--success) 100%);
+  color: white;
+}
+
+.stat-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 6px;
+  color: #1f2937;
+}
+
+.stat-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.stat-percentage {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.summary-alert {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: linear-gradient(135deg, var(--warning-bg) 0%, #fff8d5 100%);
+  border: 2px solid var(--warning);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.summary-alert svg {
+  width: 20px;
+  height: 20px;
+  color: var(--warning);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.alert-content strong {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--warning-text);
+}
+
+.alert-content span {
+  font-size: 13px;
+  color: #78350f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .summary-dashboard {
+    padding: 20px 16px;
+    margin-bottom: 24px;
+  }
+
+  .summary-header {
+    margin-bottom: 20px;
+  }
+
+  .summary-title h3 {
+    font-size: 18px;
+  }
+
+  .summary-subtitle {
+    font-size: 13px;
+    margin-left: 30px;
+  }
+
+  .summary-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .stat-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .stat-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+  }
+
+  .stat-percentage {
+    font-size: 11px;
+  }
+
+  .summary-alert {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .alert-content strong {
+    font-size: 13px;
+  }
+
+  .alert-content span {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-dashboard {
+    padding: 16px 12px;
+  }
+
+  .summary-title h3 {
+    font-size: 16px;
+  }
+
+  .summary-title svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .summary-subtitle {
+    font-size: 12px;
+    margin-left: 28px;
+  }
+
+  .stat-card {
+    padding: 14px;
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .stat-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .stat-value {
+    font-size: 24px;
+  }
+
+  .stat-label {
+    font-size: 12px;
+  }
+}

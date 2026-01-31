@@ -86,11 +86,22 @@ body {
   align-items: center;
   justify-content: center;
   gap: var(--spacing-md);
+  line-height: 1;
 }
 
 .logo-icon {
   font-size: 2.5rem;
   animation: float 3s ease-in-out infinite;
+}
+
+.logo-icon img {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--border-radius);
+  object-fit: contain;
+  background: var(--bg-secondary);
+  padding: var(--spacing-xs);
+  box-shadow: var(--shadow-sm);
 }
 
 @keyframes float {

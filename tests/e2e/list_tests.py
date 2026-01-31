@@ -41,3 +41,6 @@ def list_tests(verbose: bool = False) -> None:
 if __name__ == "__main__":
     verbose = "--verbose" in sys.argv or "-v" in sys.argv
     list_tests(verbose=verbose)
+
+
+

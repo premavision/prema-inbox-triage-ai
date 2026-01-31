@@ -137,3 +137,6 @@ If you need full Test Explorer functionality:
 1. Open the same project in VS Code
 2. VS Code has full Test Explorer support
 3. Tests will work the same way
+
+
+

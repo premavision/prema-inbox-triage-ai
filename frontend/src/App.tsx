@@ -5,6 +5,9 @@ import { emailService } from './services/api'
 import { EmailCard } from './components/EmailCard'
 import { useToast } from './context/ToastContext'
 import { Icons } from './components/Icons'
+import { HeroSection } from './components/HeroSection'
+import { SummaryDashboard } from './components/SummaryDashboard'
+import { EnhancedFooter } from './components/EnhancedFooter'
 
 function App() {
   const [emails, setEmails] = useState<Email[]>([])
@@ -82,27 +85,37 @@ function App() {
     }
   }
 
-  const handleTestError = async () => {
-    try {
-      await emailService.simulateError()
-    } catch (err: any) {
-      const msg = 'Simulated error occurred: ' + err.message
-      setError(msg)
-      showError(msg)
-    }
-  }
+  // Test error handler - uncomment when needed for debugging
+  // const handleTestError = async () => {
+  //   try {
+  //     await emailService.simulateError()
+  //   } catch (err: any) {
+  //     const msg = 'Simulated error occurred: ' + err.message
+  //     setError(msg)
+  //     showError(msg)
+  //   }
+  // }
 
   return (
     <>
       <header className="main-header">
         <div className="header-content">
-          <div className="logo">
-            <span className="logo-icon"><Icons.Mail /></span>
-            <span>Prema Inbox Triage</span>
-          </div>
+        <div className="logo">
+          <span className="logo-icon">
+            <img
+              src="https://premavision.net/logo.png"
+              alt="Prema Vision logo"
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+          <span>Prema Inbox Triage</span>
+        </div>
           <p className="tagline">AI-powered email classification</p>
         </div>
       </header>
+
+      <HeroSection />
 
       <main className="main-content">
         <div className="dashboard-container">
@@ -114,21 +127,28 @@ function App() {
                   <form className="sync-form" onSubmit={handleSync}>
                     <button type="submit" className="btn btn-primary" disabled={syncing}>
                       <Icons.Refresh className={syncing ? 'spin' : ''} />
-                      {syncing ? 'Syncing...' : 'Sync Latest Emails'}
+                      {syncing ? 'Loading...' : emails.length > 0 ? 'Reload Emails' : 'Load Sample Emails'}
                     </button>
                   </form>
-                  
-                  <form className="reset-form" onSubmit={handleReset}>
-                    <button type="submit" className="btn btn-secondary" disabled={loading}>
-                      <Icons.Trash />
-                      Reset Data
+
+                  {emails.length > 0 && (
+                    <form className="reset-form" onSubmit={handleReset}>
+                      <button type="submit" className="btn btn-secondary" disabled={loading}>
+                        <Icons.Trash />
+                        Clear All
+                      </button>
+                    </form>
+                  )}
+
+                  {/* Test Error button is hidden by default. Uncomment below for debugging */}
+                  {/*
+                  import.meta.env.DEV && (
+                    <button type="button" className="btn btn-outline" onClick={handleTestError}>
+                      <Icons.Beaker />
+                      Test Error
                     </button>
-                  </form>
-                  
-                  <button type="button" className="btn btn-outline" onClick={handleTestError}>
-                    <Icons.Beaker />
-                    Test Error
-                  </button>
+                  )
+                  */}
                 </div>
               </div>
               
@@ -141,6 +161,8 @@ function App() {
               )}
             </div>
           </section>
+
+          <SummaryDashboard emails={emails} />
 
           <section className="emails-section">
             <div className="section-header">
@@ -164,8 +186,12 @@ function App() {
               <div className="empty-inbox">
                 <div className="empty-state-large">
                   <span className="empty-icon"><Icons.Inbox /></span>
-                  <h3>No emails yet</h3>
-                  <p>Click "Sync Latest Emails" to fetch emails from your inbox.</p>
+                  <h3>Ready to See AI in Action?</h3>
+                  <p>Click <strong>"Load Sample Emails"</strong> above to load 5 sample emails and see how AI instantly classifies and prioritizes them.</p>
+                  <p className="empty-subtext">
+                    <Icons.Zap className="empty-subtext-icon" />
+                    Takes less than 30 seconds
+                  </p>
                 </div>
               </div>
             )}
@@ -173,9 +199,7 @@ function App() {
         </div>
       </main>
 
-      <footer className="main-footer">
-        <p>&copy; 2024 Prema Inbox Triage AI. All rights reserved.</p>
-      </footer>
+      <EnhancedFooter />
     </>
   )
 }

@@ -47,7 +47,14 @@ For businesses drowning in inbound communications, this architecture demonstrate
 - **Developer Experience:** Fully typed codebase (Python/TypeScript), dependency injection, and comprehensive E2E testing (Playwright).
 
 ## ⭐ Screenshots
-![UI](https://share.cleanshot.com/J1p4vq92+)
+
+### Desktop View
+![Desktop UI - Dashboard with Summary Stats](docs/images/ui-desktop.png)
+*Complete dashboard showing inbox summary with AI-powered categorization, sales lead detection, and reply drafts*
+
+### Mobile View
+![Mobile UI - Responsive Design](docs/images/ui-mobile.png)
+*Fully responsive mobile interface with touch-optimized controls and summary cards*
 
 ## Architecture Overview
 The system follows a domain-driven design with a clear separation of concerns. A FastAPI backend orchestrates the ingestion, classification, and response workflows, identifying clear boundaries between external providers (Gmail, OpenAI) and core business logic.
