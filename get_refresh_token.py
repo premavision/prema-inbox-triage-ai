@@ -86,38 +86,47 @@ def main():
     print()
 
     try:
-    flow = InstalledAppFlow.from_client_secrets_file(
-        temp_credentials_file, SCOPES
-    )
-    creds = flow.run_local_server(port=0, open_browser=True)
-    
-    # Clean up temp file
-    Path(temp_credentials_file).unlink()
-    
-    if creds and creds.refresh_token:
-        print()
-        print("=" * 60)
-        print("✓ Successfully obtained refresh token!")
-        print("=" * 60)
-        print()
-        print("Add these to your .env file:")
-        print()
-        print(f"GMAIL_CLIENT_ID={client_id}")
-        print(f"GMAIL_CLIENT_SECRET={client_secret}")
-        print(f"GMAIL_REFRESH_TOKEN={creds.refresh_token}")
-        print()
-        print("=" * 60)
-        print("⚠️  IMPORTANT: Add these to your .env file (not gmail_credentials.env)")
-        print("   Never commit .env file to version control!")
-        print()
+        flow = InstalledAppFlow.from_client_secrets_file(
+            temp_credentials_file, SCOPES
+        )
+        creds = flow.run_local_server(port=0, open_browser=True)
         
-        sys.exit(0)
-    else:
-        print("Error: No refresh token obtained")
-        print("Make sure you granted offline access during authorization")
+        # Clean up temp file
+        Path(temp_credentials_file).unlink()
+        
+        if creds and creds.refresh_token:
+            print()
+            print("=" * 60)
+            print("✓ Successfully obtained refresh token!")
+            print("=" * 60)
+            print()
+            print("Add these to your .env file:")
+            print()
+            print(f"GMAIL_CLIENT_ID={client_id}")
+            print(f"GMAIL_CLIENT_SECRET={client_secret}")
+            print(f"GMAIL_REFRESH_TOKEN={creds.refresh_token}")
+            print()
+            print("=" * 60)
+            print("⚠️  IMPORTANT: Add these to your .env file (not gmail_credentials.env)")
+            print("   Never commit .env file to version control!")
+            print()
+            
+            sys.exit(0)
+        else:
+            print("Error: No refresh token obtained")
+            print("Make sure you granted offline access during authorization")
+            sys.exit(1)
+            
+    except KeyboardInterrupt:
+        print("\nCancelled by user")
+        Path(temp_credentials_file).unlink(missing_ok=True)
         sys.exit(1)
-        
-    # (Unreachable code removed)
+    except Exception as e:
+        print(f"Error: {e}")
+        import traceback
+        traceback.print_exc()
+        Path(temp_credentials_file).unlink(missing_ok=True)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
