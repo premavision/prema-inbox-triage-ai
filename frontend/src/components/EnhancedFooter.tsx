@@ -8,7 +8,7 @@ export function EnhancedFooter() {
       brief: 'Interested in Prema Inbox Triage AI - AI-powered lead detection and email classification system',
       source: 'Prema Inbox Triage Demo'
     })
-    window.open(`https://premavision.net/contact?${params.toString()}`, '_blank')
+    window.open(`https://premavision.net/contact?${params.toString()}`, '_blank', 'noopener,noreferrer')
   }
 
   return (
