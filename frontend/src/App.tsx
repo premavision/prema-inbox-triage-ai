@@ -186,7 +186,7 @@ function App() {
                 <div className="empty-state-large">
                   <span className="empty-icon"><Icons.Inbox /></span>
                   <h3>Ready to See AI in Action?</h3>
-                  <p>Click <strong>"Sync Latest Emails"</strong> above to load 5 sample emails and see how AI instantly classifies and prioritizes them.</p>
+                  <p>Click <strong>"Load Sample Emails"</strong> above to load 5 sample emails and see how AI instantly classifies and prioritizes them.</p>
                   <p className="empty-subtext">
                     <Icons.Zap className="empty-subtext-icon" />
                     Takes less than 30 seconds
