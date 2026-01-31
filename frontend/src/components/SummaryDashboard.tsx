@@ -13,7 +13,6 @@ export function SummaryDashboard({ emails }: SummaryDashboardProps) {
     const support = emails.filter(e => e.category === 'SUPPORT_REQUEST')
     const internal = emails.filter(e => e.category === 'INTERNAL')
 
-    const highPriority = emails.filter(e => e.priority === 'High').length
     const replied = emails.filter(e => e.suggested_reply && e.suggested_reply.length > 0).length
 
     return {
@@ -21,7 +20,6 @@ export function SummaryDashboard({ emails }: SummaryDashboardProps) {
       leads: leads.length,
       support: support.length,
       internal: internal.length,
-      highPriority,
       replied,
       replyRate: emails.length > 0 ? Math.round((replied / emails.length) * 100) : 0
     }
