@@ -85,15 +85,16 @@ function App() {
     }
   }
 
-  const handleTestError = async () => {
-    try {
-      await emailService.simulateError()
-    } catch (err: any) {
-      const msg = 'Simulated error occurred: ' + err.message
-      setError(msg)
-      showError(msg)
-    }
-  }
+  // Test error handler - uncomment when needed for debugging
+  // const handleTestError = async () => {
+  //   try {
+  //     await emailService.simulateError()
+  //   } catch (err: any) {
+  //     const msg = 'Simulated error occurred: ' + err.message
+  //     setError(msg)
+  //     showError(msg)
+  //   }
+  // }
 
   return (
     <>
