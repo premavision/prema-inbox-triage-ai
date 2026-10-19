@@ -1,7 +1,7 @@
 # Prema Inbox Triage AI
 Production-grade FastAPI + React/Vite automation platform that syncs Gmail inboxes, classifies messages with LLMs, and drafts actionable replies.
 
-> Built by **Prema Vision LLC**, an AI automation consultancy led by **Denys Korolkov**.
+> Built by **Denys Korolkov** under **Prema Vision LLC**.
 
 ## ⭐ Live Demo
 
